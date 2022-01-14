@@ -1,2 +1,2 @@
-# PES
-Particle Entrainment Simulation Code
+# SPECS
+Stokesian Particle Entrainment in a Cylinder Simulation
