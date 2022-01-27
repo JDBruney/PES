@@ -70,11 +70,14 @@ integer (kind=4) :: XN = XNclose+XNfar
 !integer (kind =4), parameter :: numtrapz         = 50;!slow! N pts 4 grid points for trapezoidal (CHECK that trapzN used)
 	!dependent parameters
 	real (kind=8) :: ms                  		   = 4.0/3.0*pi*R**3*rhos; 				!mass of the sphere
-	real (kind=8) :: oneoversixpiamuK     		   = (1-2.10444*(R/R0) +2.08877*((R/R0)**3))* 1.0/(6.0*pi*R*mu)
+real (kind=8) :: oneoversixpiamuK     		   = (1-2.10444*(R/R0) +2.08877*((R/R0)**3))* 1.0/(6.0*pi*R*mu)
+	real (kind=8) :: stresspertcoeff     		   = -0.25*g*(rhot-rhob)*R*2.0*pi;    	!coefficient of the perturbatio stress
+	!real (kind=8) :: stresspert          		   = 0.0;								!perturbation stress
 	real (kind=8) :: buoyancytop         		   = -4.0/3.0*pi*R**3*g*rhot;           !buoyant force when sphere is above the interface
 	real (kind=8) :: buoyancybottom         	   = -4.0/3.0*pi*R**3*g*rhob;           !buoyant force when sphere is below the interface
 	real (kind=8) :: buoyancyCoeff1      		   = -pi*g/3.0*(rhob-rhot);           	!first coefficient for the buoyant force when sphere is in interface
 	real (kind=8) :: buoyancyCoeff2       		   = -2.0*pi*g/3.0*R**3*(rhob+rhot);    !second coefficient for the buoyant force when sphere is in interface
+	real (kind=8) :: drhogover8mu        		   = (rhob-rhot)*g/(8.0*mu);          	!coefficient for the perturbation flow
 	real (kind=8) :: myt        		   		   = 0
 	
 	!interface
@@ -103,7 +106,7 @@ real (kind=8) yend, xflagb, xflagl, px, py, myrho, myzeta
 	real (kind=8) WZ(NZ), WR(NR), myHZ(NZ), myGZ(NZ),&
 	myHR(NR), myGR(NR), firstpartZ(NZ), firstpartR(NR), myk(NZ)
 
-real (kind=8) AreaReflux,AreaSpherePortion,AreaEntrain, startx(XNclose+XNfar+1), starty(XNclose+XNfar+1),wforceE, wforceR, wforce, ArchBouyancy,ArchBE, stresspert, stresspertA,ArchBR, stresspertE,stresspertReflux,stresspertcoeff 
+real (kind=8) AreaReflux,AreaSpherePortion,AreaEntrain, startx(XNclose+XNfar+1), starty(XNclose+XNfar+1),wforceE, wforceR, wforce, ArchBouyancy,ArchBE, stresspert, stresspertA,ArchBR, stresspertE,stresspertReflux
 END MODULE globalinfo
 
 program fulltime_2009_05_02_Fortran
@@ -566,7 +569,6 @@ if (flagb /= XN+1) then
 call trapz1(stresstail1D, xflagb, sx(XN+1),real(0.01,kind=8), stressbackflow)
 
 endif
-stresspertcoeff=-0.25*g*(rhot-rhob)*R*2.0*pi
 stresspert  = stresspertcoeff*(stressbelowsphere + stresssidesphere + stressabovesphere -stressbackflow)
 endif
 
